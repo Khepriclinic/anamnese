@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anamnese · Clínica Khepri</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f4f2;min-height:100vh;padding-bottom:60px}
+.wrap{max-width:680px;margin:0 auto;padding:2rem 1.25rem}
+.logo{text-align:center;margin-bottom:1.5rem}
+.logo h1{font-size:26px;font-weight:700;color:#1a1a1a}
+.logo p{font-size:14px;color:#888;margin-top:4px}
+.progbar{height:5px;background:#e0e0e0;border-radius:3px}
+.progfill{height:100%;background:#2d7dd2;border-radius:3px;transition:width .4s ease}
+.progtxt{font-size:12px;color:#999;text-align:right;margin-top:5px;margin-bottom:1.5rem}
+.card{background:#fff;border-radius:16px;padding:1.75rem;box-shadow:0 1px 8px rgba(0,0,0,.08);display:none}
+.card.ativo{display:block}
+.badge{display:inline-block;font-size:11px;font-weight:700;color:#2d7dd2;background:#e8f1fb;padding:3px 10px;border-radius:20px;margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em}
+.titulo{font-size:20px;font-weight:700;margin-bottom:6px;color:#1a1a1a}
+.subtit{font-size:13px;color:#666;line-height:1.6;margin-bottom:1.5rem}
+.campo{margin-bottom:1.2rem}
+.campo label{display:block;font-size:14px;font-weight:600;color:#222;margin-bottom:7px}
+.campo .dica{font-size:12px;color:#bbb;font-style:italic;margin-bottom:6px;display:block}
+input[type=text],input[type=date],select,textarea{width:100%;padding:10px 13px;border:1px solid #ddd;border-radius:10px;font-size:14px;font-family:inherit;background:#fafafa;color:#1a1a1a;transition:border .2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#2d7dd2;background:#fff}
+textarea{resize:vertical;min-height:70px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:500px){.g2,.g3{grid-template-columns:1fr}}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+.pill{padding:7px 15px;border:1.5px solid #ddd;border-radius:20px;font-size:13px;cursor:pointer;background:#fff;color:#444;user-select:none;transition:all .15s;line-height:1.4}
+.pill:hover{border-color:#2d7dd2;color:#2d7dd2}
+.pill.sel{background:#e8f1fb;border-color:#2d7dd2;color:#1a4f8a;font-weight:700}
+.htab{width:100%;border-collapse:collapse}
+.htab tr{border-bottom:1px solid #f0f0f0}
+.htab tr:last-child{border-bottom:none}
+.htab td{padding:10px 4px;vertical-align:middle}
+.htab td:first-child{font-size:13px;color:#333;width:38%;padding-right:8px}
+.hopts{display:flex;gap:6px;flex-wrap:wrap}
+.hbtn{padding:5px 12px;border:1.5px solid #ddd;border-radius:16px;font-size:12px;cursor:pointer;background:#fff;color:#555;transition:all .15s;font-family:inherit}
+.hbtn:hover{border-color:#2d7dd2;color:#2d7dd2}
+.hbtn.sel{background:#e8f1fb;border-color:#2d7dd2;color:#1a4f8a;font-weight:700}
+.fq{margin-bottom:1.1rem}
+.fq label{display:block;font-size:13px;font-weight:600;color:#333;margin-bottom:7px}
+.fgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:6px}
+@media(max-width:460px){.fgrid{grid-template-columns:repeat(3,1fr)}}
+.fcor{border:1.5px solid #e0e0e0;border-radius:10px;padding:9px 4px;text-align:center;cursor:pointer;transition:all .15s}
+.fcor:hover{border-color:#2d7dd2}
+.fcor.sel{border:2px solid #2d7dd2;background:#e8f1fb}
+.bola{width:32px;height:32px;border-radius:50%;margin:0 auto 5px;border:1px solid rgba(0,0,0,.1)}
+.fcor strong{font-size:11px;display:block;color:#222}
+.fcor span{font-size:10px;color:#888;display:block}
+.fpontos{margin-top:10px;padding:10px 14px;background:#f0f7ff;border-radius:10px;font-size:13px;color:#1a4f8a;display:none;border-left:3px solid #2d7dd2}
+.atab{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.atab th{background:#f8f8f8;font-weight:600;color:#555;padding:8px 10px;text-align:left;border-bottom:2px solid #eee;font-size:12px}
+.atab td{padding:8px 10px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.atab tr:last-child td{border-bottom:none}
+.anome{font-weight:600;color:#222;font-size:13px}
+.atipo{font-size:11px;color:#888}
+.aopt{display:flex;gap:5px;flex-wrap:wrap}
+.abtn{padding:4px 9px;border:1.5px solid #ddd;border-radius:14px;font-size:11px;cursor:pointer;background:#fff;color:#666;font-family:inherit;transition:all .15s}
+.abtn:hover{border-color:#2d7dd2}
+.abtn.verde.sel{background:#e6f4ec;border-color:#1a9e75;color:#155a3d;font-weight:700}
+.abtn.amarelo.sel{background:#fff8e1;border-color:#f0a500;color:#7a5000;font-weight:700}
+.abtn.vermelho.sel{background:#f5e6e8;border-color:#7a0020;color:#7a0020;font-weight:700}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:2rem;padding-top:1.25rem;border-top:1px solid #f0f0f0}
+.dots{display:flex;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:#ddd}
+.dot.at{background:#2d7dd2}
+.dot.ok{background:#8ecfc4}
+.bvolt{padding:10px 20px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;cursor:pointer;background:#fff;color:#666;font-family:inherit}
+.bvolt:hover{background:#f5f5f5}
+.bprox{padding:10px 26px;border:none;border-radius:10px;font-size:14px;cursor:pointer;background:#2d7dd2;color:#fff;font-weight:700;font-family:inherit}
+.bprox:hover{background:#1a5da8}
+.bfim{background:#1a9e75}
+.bfim:hover{background:#107a5a}
+#resultado{display:none}
+.reshd{text-align:center;padding:1.5rem 0 1rem}
+.resico{width:54px;height:54px;border-radius:50%;background:#e8f1fb;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.resnome{font-size:22px;font-weight:700;color:#1a1a1a}
+.ressub{font-size:14px;color:#888;margin-top:4px}
+.resgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:1.5rem 0}
+@media(max-width:500px){.resgrid{grid-template-columns:1fr}}
+.rc{background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:1.1rem 1.25rem}
+.rc.full{grid-column:1/-1}
+.rc.azul{border-left:4px solid #2d7dd2}
+.rc.verde{border-left:4px solid #1a9e75}
+.rc.ambar{border-left:4px solid #f0a500}
+.rc.bordo{border-left:4px solid #7a0020}
+.rc.roxo{border-left:4px solid #8b5cf6}
+.rclabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#aaa;margin-bottom:5px}
+.rcval{font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+.rcdesc{font-size:12px;color:#666;line-height:1.6}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.tag{padding:4px 11px;border-radius:12px;font-size:12px;font-weight:600}
+.tag.w{background:#f5e6e8;color:#7a0020}
+.tag.i{background:#e8f1fb;color:#1a4f8a}
+.tag.k{background:#e6f4ec;color:#1a6035}
+.refs{background:#fafafa;border:1px solid #eee;border-radius:12px;padding:14px 16px;margin-top:1.5rem}
+.refs p{font-size:11px;color:#aaa;line-height:1.9}
+.refs strong{color:#888}
+.bimprime{width:100%;margin-top:12px;padding:12px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;cursor:pointer;background:#fff;color:#666;font-family:inherit}
+.bimprime:hover{background:#f5f5f5}
+@media print{.nav,.bimprime,.progbar,.progtxt,#quiz{display:none!important}#resultado{display:block!important}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="logo">
+    <h1>Clínica Khepri</h1>
+    <p>Anamnese Dermatológica</p>
+  </div>
+
+  <div class="progbar"><div class="progfill" id="pf" style="width:12.5%"></div></div>
+  <div class="progtxt" id="pt">Seção 1 de 8</div>
+
+  <div id="quiz">
+
+    <!-- S1 Cadastro -->
+    <div class="card ativo" id="s1">
+      <span class="badge">Seção 1 de 8</span>
+      <div class="titulo">Cadastro do paciente</div>
+      <div class="subtit">Dados pessoais e de contato</div>
+      <div class="g2">
+        <div class="campo"><label>Nome completo</label><input type="text" id="nome" placeholder="Nome do paciente"></div>
+        <div class="campo"><label>Data de nascimento</label><input type="date" id="nasc"></div>
+      </div>
+      <div class="g3">
+        <div class="campo"><label>Sexo biológico</label>
+          <select id="sexo"><option value="">Selecionar</option><option>Feminino</option><option>Masculino</option></select>
+        </div>
+        <div class="campo"><label>Profissão</label><input type="text" id="prof" placeholder="Ex: professora"></div>
+        <div class="campo"><label>WhatsApp</label><input type="text" id="tel" placeholder="(00) 00000-0000"></div>
+      </div>
+      <div class="g2">
+        <div class="campo"><label>Cidade / UF</label><input type="text" id="cidade" placeholder="Ex: São Paulo / SP"></div>
+        <div class="campo"><label>Como nos encontrou?</label>
+          <select id="origem"><option value="">Selecionar</option><option>Indicação</option><option>Instagram</option><option>Google</option><option>Outro</option></select>
+        </div>
+      </div>
+      <div class="nav"><span></span><div class="dots" id="d1"></div><button class="bprox" onclick="ir(2)">Próximo →</button></div>
+    </div>
+
+    <!-- S2 Queixa -->
+    <div class="card" id="s2">
+      <span class="badge">Seção 2 de 8</span>
+      <div class="titulo">Queixa principal e histórico</div>
+      <div class="subtit">Motivo da consulta e contexto clínico</div>
+      <div class="campo"><label>Principal queixa ou objetivo hoje?</label>
+        <textarea id="queixa" placeholder="Ex: manchas, acne, flacidez, poros dilatados, ressecamento..."></textarea>
+      </div>
+      <div class="campo"><label>Há quanto tempo?</label>
+        <div class="pills" data-k="tempo">
+          <div class="pill" data-v="Menos de 1 mês">Menos de 1 mês</div>
+          <div class="pill" data-v="1 a 6 meses">1–6 meses</div>
+          <div class="pill" data-v="6 meses a 1 ano">6m–1 ano</div>
+          <div class="pill" data-v="Mais de 1 ano">Mais de 1 ano</div>
+          <div class="pill" data-v="Desde sempre">Desde sempre</div>
+        </div>
+      </div>
+      <div class="campo"><label>Tratamentos estéticos anteriores?</label>
+        <div class="pills" data-k="trat">
+          <div class="pill" data-v="Não">Não</div>
+          <div class="pill" data-v="Limpeza de pele">Limpeza de pele</div>
+          <div class="pill" data-v="Peelings">Peelings</div>
+          <div class="pill" data-v="Laser / luz pulsada">Laser / luz pulsada</div>
+          <div class="pill" data-v="Injeções / toxina">Injeções / toxina</div>
+          <div class="pill" data-v="Outros">Outros</div>
+        </div>
+      </div>
+      <div class="campo"><label>Medicamento contínuo?</label>
+        <div class="pills" data-k="meds">
+          <div class="pill" data-v="Não">Não</div>
+          <div class="pill" data-v="Anticoncepcional">Anticoncepcional</div>
+          <div class="pill" data-v="Antidepressivo">Antidepressivo</div>
+          <div class="pill" data-v="Isotretinoína">Isotretinoína</div>
+          <div class="pill" data-v="Anti-hipertensivo">Anti-hipertensivo</div>
+          <div class="pill" data-v="Hormônios">Hormônios</div>
+          <div class="pill" data-v="Outros">Outros</div>
+        </div>
+      </div>
+      <div class="campo"><label>Condições de saúde diagnosticadas? <span class="dica" style="display:inline;font-style:normal">(pode marcar mais de uma)</span></label>
+        <div class="pills" data-k="saude" data-m="1">
+          <div class="pill" data-v="Nenhuma">Nenhuma</div>
+          <div class="pill" data-v="Diabetes">Diabetes</div>
+          <div class="pill" data-v="Hipotireoidismo">Hipotireoidismo</div>
+          <div class="pill" data-v="Hipertensão">Hipertensão</div>
+          <div class="pill" data-v="SOP">SOP (Ovário Policístico)</div>
+          <div class="pill" data-v="Lúpus / autoimune">Lúpus / autoimune</div>
+          <div class="pill" data-v="Rosácea">Rosácea</div>
+          <div class="pill" data-v="Psoríase">Psoríase</div>
+          <div class="pill" data-v="Dermatite atópica">Dermatite atópica</div>
+          <div class="pill" data-v="Outra">Outra</div>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="campo"><label>Alergias conhecidas?</label><input type="text" id="alergia" placeholder="Cosméticos, medicamentos..."></div>
+        <div class="campo"><label>Gestante ou amamentando?</label>
+          <select id="gest"><option value="">Selecionar</option><option>Não</option><option>Gestante</option><option>Amamentando</option><option>Não aplicável</option></select>
+        </div>
+      </div>
+      <div class="nav"><button class="bvolt" onclick="ir(1)">← Voltar</button><div class="dots" id="d2"></div><button class="bprox" onclick="ir(3)">Próximo →</button></div>
+    </div>
+
+    <!-- S3 Rotina -->
+    <div class="card" id="s3">
+      <span class="badge">Seção 3 de 8</span>
+      <div class="titulo">Rotina de cuidados com a pele</div>
+      <div class="subtit">Produtos e hábitos de higiene e proteção diária</div>
+      <div class="campo"><label>Rotina de limpeza</label>
+        <div class="pills" data-k="limp">
+          <div class="pill" data-v="Só água">Só água</div>
+          <div class="pill" data-v="Sabonete comum">Sabonete comum</div>
+          <div class="pill" data-v="Sabonete facial">Sabonete facial</div>
+          <div class="pill" data-v="Mousse / gel">Mousse / gel</div>
+          <div class="pill" data-v="Água micelar">Água micelar</div>
+          <div class="pill" data-v="Double cleansing">Double cleansing</div>
+        </div>
+      </div>
+      <div class="campo"><label>Frequência de lavagem do rosto</label>
+        <div class="pills" data-k="freq">
+          <div class="pill" data-v="1x ao dia">1x ao dia</div>
+          <div class="pill" data-v="2x ao dia">2x ao dia</div>
+          <div class="pill" data-v="Mais de 2x ao dia">Mais de 2x</div>
+          <div class="pill" data-v="Raramente">Raramente</div>
+        </div>
+      </div>
+      <div class="campo"><label>Hidratante facial</label>
+        <div class="pills" data-k="hidrat">
+          <div class="pill" data-v="Não usa">Não usa</div>
+          <div class="pill" data-v="Às vezes">Às vezes</div>
+          <div class="pill" data-v="Diariamente">Diariamente</div>
+          <div class="pill" data-v="Manhã e noite">Manhã e noite</div>
+        </div>
+      </div>
+      <div class="campo"><label>Protetor solar</label>
+        <div class="pills" data-k="prot">
+          <div class="pill" data-v="Não usa">Não usa</div>
+          <div class="pill" data-v="Às vezes">Às vezes</div>
+          <div class="pill" data-v="Diariamente">Diariamente</div>
+          <div class="pill" data-v="Diariamente com reaplicação">Com reaplicação</div>
+        </div>
+      </div>
+      <div class="campo"><label>Ativos ou séruns em uso <span class="dica" style="display:inline;font-style:normal">(pode marcar vários)</span></label>
+        <div class="pills" data-k="ativos" data-m="1">
+          <div class="pill" data-v="Nenhum">Nenhum</div>
+          <div class="pill" data-v="Vitamina C">Vitamina C</div>
+          <div class="pill" data-v="Retinol">Retinol</div>
+          <div class="pill" data-v="Ácido hialurônico">Ác. hialurônico</div>
+          <div class="pill" data-v="Niacinamida">Niacinamida</div>
+          <div class="pill" data-v="AHA/BHA">AHA/BHA</div>
+          <div class="pill" data-v="Peptídeos">Peptídeos</div>
+          <div class="pill" data-v="Outros">Outros</div>
+        </div>
+      </div>
+      <div class="nav"><button class="bvolt" onclick="ir(2)">← Voltar</button><div class="dots" id="d3"></div><button class="bprox" onclick="ir(4)">Próximo →</button></div>
+    </div>
+
+    <!-- S4 Hábitos -->
+    <div class="card" id="s4">
+      <span class="badge">Seção 4 de 8</span>
+      <div class="titulo">Hábitos de vida</div>
+      <div class="subtit">Fatores sistêmicos com impacto direto na saúde da pele</div>
+      <table class="htab">
+        <tr><td>💧 Água por dia</td><td><div class="hopts" data-hn="agua">
+          <button class="hbtn" data-hv="Menos de 1L">Menos de 1L</button>
+          <button class="hbtn" data-hv="1 a 1,5L">1–1,5L</button>
+          <button class="hbtn" data-hv="1,5 a 2L">1,5–2L</button>
+          <button class="hbtn" data-hv="Mais de 2L">Mais de 2L</button>
+        </div></td></tr>
+        <tr><td>😴 Sono</td><td><div class="hopts" data-hn="sono">
+          <button class="hbtn" data-hv="Ruim (menos de 5h)">Ruim &lt;5h</button>
+          <button class="hbtn" data-hv="Regular (5 a 6h)">Regular 5–6h</button>
+          <button class="hbtn" data-hv="Bom (7 a 8h)">Bom 7–8h</button>
+          <button class="hbtn" data-hv="Excelente (8h+)">Excelente</button>
+        </div></td></tr>
+        <tr><td>🧘 Estresse</td><td><div class="hopts" data-hn="stress">
+          <button class="hbtn" data-hv="Baixo">Baixo</button>
+          <button class="hbtn" data-hv="Moderado">Moderado</button>
+          <button class="hbtn" data-hv="Alto">Alto</button>
+          <button class="hbtn" data-hv="Muito alto">Muito alto</button>
+        </div></td></tr>
+        <tr><td>🏃 Atividade física</td><td><div class="hopts" data-hn="ativ">
+          <button class="hbtn" data-hv="Sedentário">Sedentário</button>
+          <button class="hbtn" data-hv="1 a 2x por semana">1–2x/sem</button>
+          <button class="hbtn" data-hv="3 a 4x por semana">3–4x/sem</button>
+          <button class="hbtn" data-hv="5 ou mais vezes por semana">5+/sem</button>
+        </div></td></tr>
+        <tr><td>🍎 Alimentação</td><td><div class="hopts" data-hn="alim">
+          <button class="hbtn" data-hv="Ruim (muito processado)">Ruim</button>
+          <button class="hbtn" data-hv="Regular">Regular</button>
+          <button class="hbtn" data-hv="Boa">Boa</button>
+          <button class="hbtn" data-hv="Excelente (natural/integral)">Excelente</button>
+        </div></td></tr>
+        <tr><td>☀️ Sol sem protetor</td><td><div class="hopts" data-hn="sol">
+          <button class="hbtn" data-hv="Mínima (ambiente interno)">Mínima</button>
+          <button class="hbtn" data-hv="Moderada (~30min/dia)">Moderada</button>
+          <button class="hbtn" data-hv="Intensa (1 a 2h/dia)">Intensa</button>
+          <button class="hbtn" data-hv="Muito intensa (campo/praia)">Extrema</button>
+        </div></td></tr>
+      </table>
+      <div class="campo" style="margin-top:1rem"><label>Tabagismo</label>
+        <div class="pills" data-k="fumo">
+          <div class="pill" data-v="Nunca fumou">Nunca</div>
+          <div class="pill" data-v="Ex-fumante">Ex-fumante</div>
+          <div class="pill" data-v="Fumante atual">Fumante atual</div>
+        </div>
+      </div>
+      <div class="campo"><label>Álcool</label>
+        <div class="pills" data-k="alcool">
+          <div class="pill" data-v="Não consome">Não consome</div>
+          <div class="pill" data-v="Ocasional">Ocasional</div>
+          <div class="pill" data-v="Frequente (3 ou mais vezes/sem)">Frequente 3+/sem</div>
+        </div>
+      </div>
+      <div class="nav"><button class="bvolt" onclick="ir(3)">← Voltar</button><div class="dots" id="d4"></div><button class="bprox" onclick="ir(5)">Próximo →</button></div>
+    </div>
+
+    <!-- S5 Fitzpatrick -->
+    <div class="card" id="s5">
+      <span class="badge">Seção 5 de 8 · Escala de Fitzpatrick (1988)</span>
+      <div class="titulo">Fototipo de pele</div>
+      <div class="subtit">Responda as perguntas abaixo. O fototipo será calculado automaticamente pela pontuação acumulada.</div>
+      <div class="fq"><label>1. Cor natural do cabelo (sem tintura)</label>
+        <div class="pills" data-k="f1">
+          <div class="pill" data-v="1">Loiro muito claro / ruivo</div>
+          <div class="pill" data-v="2">Loiro / castanho claro</div>
+          <div class="pill" data-v="3">Castanho médio</div>
+          <div class="pill" data-v="4">Castanho escuro / preto</div>
+        </div>
+      </div>
+      <div class="fq"><label>2. Cor natural dos olhos</label>
+        <div class="pills" data-k="f2">
+          <div class="pill" data-v="1">Azul / cinza / verde claro</div>
+          <div class="pill" data-v="2">Verde / cinza / azul médio</div>
+          <div class="pill" data-v="3">Castanho claro / mel</div>
+          <div class="pill" data-v="4">Castanho escuro / preto</div>
+        </div>
+      </div>
+      <div class="fq"><label>3. Sardas naturais no rosto?</label>
+        <div class="pills" data-k="f3">
+          <div class="pill" data-v="3">Muitas sardas</div>
+          <div class="pill" data-v="2">Algumas sardas</div>
+          <div class="pill" data-v="1">Poucas / quase nenhuma</div>
+          <div class="pill" data-v="0">Nenhuma</div>
+        </div>
+      </div>
+      <div class="fq"><label>4. Tom de pele em área nunca exposta ao sol (barriga / parte interna do braço)</label>
+        <div class="pills" data-k="f4">
+          <div class="pill" data-v="0">Muito branca / marfim</div>
+          <div class="pill" data-v="1">Clara / bege pálida</div>
+          <div class="pill" data-v="2">Bege / levemente bronzeada</div>
+          <div class="pill" data-v="3">Morena clara / oliva</div>
+          <div class="pill" data-v="4">Morena / parda</div>
+          <div class="pill" data-v="5">Negra / muito escura</div>
+        </div>
+      </div>
+      <div class="fq"><label>5. Primeira exposição prolongada ao sol forte sem protetor: o que acontece?</label>
+        <div class="pills" data-k="f5">
+          <div class="pill" data-v="0">Queimadura dolorosa com bolhas — nunca bronzeia</div>
+          <div class="pill" data-v="1">Queima quase sempre, bronzeia muito pouco</div>
+          <div class="pill" data-v="2">Às vezes queima, bronzeia gradualmente</div>
+          <div class="pill" data-v="3">Queima raramente, bronzeia facilmente</div>
+          <div class="pill" data-v="4">Raramente queima, bronzeia rápido e muito</div>
+          <div class="pill" data-v="5">Nunca queima, pele apenas escurece</div>
+        </div>
+      </div>
+      <div class="fq"><label>6. Com exposição solar repetida, como fica o bronzeado?</label>
+        <div class="pills" data-k="f6">
+          <div class="pill" data-v="0">Nunca fico bronzeada(o), descasco</div>
+          <div class="pill" data-v="1">Fico levemente bronzeada(o)</div>
+          <div class="pill" data-v="2">Fico moderadamente bronzeada(o)</div>
+          <div class="pill" data-v="3">Fico bem bronzeada(o)</div>
+          <div class="pill" data-v="4">Fico muito bronzeada(o) rapidamente</div>
+          <div class="pill" data-v="5">Pele já naturalmente muito pigmentada</div>
+        </div>
+      </div>
+      <div class="fq"><label>7. Já teve queimaduras solares graves (bolhas, dor intensa) na vida?</label>
+        <div class="pills" data-k="f7">
+          <div class="pill" data-v="3">Sim, várias vezes</div>
+          <div class="pill" data-v="2">Sim, algumas vezes</div>
+          <div class="pill" data-v="1">Uma ou duas vezes</div>
+          <div class="pill" data-v="0">Nunca</div>
+        </div>
+      </div>
+      <div class="fq"><label>8. Selecione o tom de pele mais próximo ao seu (sem bronzeado)</label>
+        <div class="fgrid">
+          <div class="fcor" onclick="selFitz(this,'I')"><div class="bola" style="background:#FDDBB4"></div><strong>Tipo I</strong><span>Muito clara</span></div>
+          <div class="fcor" onclick="selFitz(this,'II')"><div class="bola" style="background:#F5C48A"></div><strong>Tipo II</strong><span>Clara/bege</span></div>
+          <div class="fcor" onclick="selFitz(this,'III')"><div class="bola" style="background:#D4956A"></div><strong>Tipo III</strong><span>Morena clara</span></div>
+          <div class="fcor" onclick="selFitz(this,'IV')"><div class="bola" style="background:#B06B3D"></div><strong>Tipo IV</strong><span>Morena média</span></div>
+          <div class="fcor" onclick="selFitz(this,'V')"><div class="bola" style="background:#7A4524"></div><strong>Tipo V</strong><span>Morena escura</span></div>
+          <div class="fcor" onclick="selFitz(this,'VI')"><div class="bola" style="background:#3B1D0D"></div><strong>Tipo VI</strong><span>Negra</span></div>
+        </div>
+      </div>
+      <div class="fpontos" id="fpontos"></div>
+      <div class="nav"><button class="bvolt" onclick="ir(4)">← Voltar</button><div class="dots" id="d5"></div><button class="bprox" onclick="ir(6)">Próximo →</button></div>
+    </div>
+
+    <!-- S6 Baumann -->
+    <div class="card" id="s6">
+      <span class="badge">Seção 6 de 8 · Baumann BSTI (2008)</span>
+      <div class="titulo">Tipo e características da pele</div>
+      <div class="subtit">Avalia oleosidade, sensibilidade, pigmentação e envelhecimento.</div>
+      <div class="campo"><label>Como a pele fica horas após lavar o rosto sem aplicar nada?</label>
+        <div class="pills" data-k="oleo">
+          <div class="pill" data-v="Muito seca">Muito seca, descama e coça</div>
+          <div class="pill" data-v="Seca">Seca e repuxada</div>
+          <div class="pill" data-v="Normal">Normal, sem incômodo</div>
+          <div class="pill" data-v="Mista">Oleosa só na zona T (testa/nariz)</div>
+          <div class="pill" data-v="Oleosa">Oleosa no rosto todo</div>
+        </div>
+      </div>
+      <div class="campo"><label>Reage a cosméticos, perfumes, tecidos ou mudança de clima?</label>
+        <div class="pills" data-k="sensib">
+          <div class="pill" data-v="Resistente">Raramente reage a qualquer coisa</div>
+          <div class="pill" data-v="Pouco sensível">Irrita só com produtos muito agressivos</div>
+          <div class="pill" data-v="Sensível">Fica vermelha ou arde com frequência</div>
+          <div class="pill" data-v="Muito sensível">Reage a quase tudo, arde facilmente</div>
+        </div>
+      </div>
+      <div class="campo"><label>Tendência a manchas, melasma ou escurecimento?</label>
+        <div class="pills" data-k="pigm">
+          <div class="pill" data-v="Sem manchas">Não, pele uniforme</div>
+          <div class="pill" data-v="Sardas">Sardas / efélides</div>
+          <div class="pill" data-v="Melasma">Melasma (manchas simétricas)</div>
+          <div class="pill" data-v="Manchas pós-inflamatórias">Manchas pós-espinha / lesão</div>
+          <div class="pill" data-v="Hipercromia difusa">Escurecimento generalizado</div>
+        </div>
+      </div>
+      <div class="campo"><label>Sinais de envelhecimento?</label>
+        <div class="pills" data-k="env">
+          <div class="pill" data-v="Sem sinais">Sem rugas ou linhas visíveis</div>
+          <div class="pill" data-v="Linhas finas">Linhas finas (aparecem ao sorrir)</div>
+          <div class="pill" data-v="Rugas moderadas">Rugas visíveis em repouso</div>
+          <div class="pill" data-v="Flacidez">Flacidez visível no oval do rosto</div>
+          <div class="pill" data-v="Rugas profundas e flacidez">Rugas profundas + flacidez intensa</div>
+        </div>
+      </div>
+      <div class="campo"><label>Acne com frequência?</label>
+        <div class="pills" data-k="acne">
+          <div class="pill" data-v="Não">Não</div>
+          <div class="pill" data-v="Ocasional (1 a 2 por mês)">Ocasional</div>
+          <div class="pill" data-v="Frequente (toda semana)">Frequente</div>
+          <div class="pill" data-v="Acne persistente / inflamada">Persistente / inflamada</div>
+        </div>
+      </div>
+      <div class="campo"><label>Poros dilatados?</label>
+        <div class="pills" data-k="poros">
+          <div class="pill" data-v="Não">Não</div>
+          <div class="pill" data-v="Pouco visíveis">Pouco visíveis</div>
+          <div class="pill" data-v="Moderados">Moderados</div>
+          <div class="pill" data-v="Muito dilatados">Muito dilatados</div>
+        </div>
+      </div>
+      <div class="nav"><button class="bvolt" onclick="ir(5)">← Voltar</button><div class="dots" id="d6"></div><button class="bprox" onclick="ir(7)">Próximo →</button></div>
+    </div>
+
+    <!-- S7 Tolerância ácidos -->
+    <div class="card" id="s7">
+      <span class="badge">Seção 7 de 8 · Tolerância a ativos e ácidos</span>
+      <div class="titulo">Sensibilidade a ácidos e ativos</div>
+      <div class="subtit">Baseado em Baumann (2008) e Kede &amp; Sabatovich (2009). Indique como sua pele costuma reagir a cada ativo.</div>
+      <div class="campo">
+        <span class="dica">🟢 Tolerou bem &nbsp;|&nbsp; 🟡 Nunca usei &nbsp;|&nbsp; 🔴 Irritou / ardeu / descamou</span>
+        <table class="atab">
+          <thead><tr><th>Ativo / Ácido</th><th>Para que serve</th><th>Sua reação</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="anome">AHA</span><br><span class="atipo">Glicólico, Mandélico, Lático</span></td>
+              <td style="font-size:12px;color:#666">Renovação, manchas, textura</td>
+              <td><div class="aopt" data-an="aha">
+                <button class="abtn verde" data-av="Tolerou bem">🟢 Tolerou</button>
+                <button class="abtn amarelo" data-av="Nunca usei">🟡 Nunca usei</button>
+                <button class="abtn vermelho" data-av="Irritou">🔴 Irritou</button>
+              </div></td>
+            </tr>
+            <tr>
+              <td><span class="anome">BHA</span><br><span class="atipo">Ácido Salicílico</span></td>
+              <td style="font-size:12px;color:#666">Acne, poros, oleosidade</td>
+              <td><div class="aopt" data-an="bha">
+                <button class="abtn verde" data-av="Tolerou bem">🟢 Tolerou</button>
+                <button class="abtn amarelo" data-av="Nunca usei">🟡 Nunca usei</button>
+                <button class="abtn vermelho" data-av="Irritou">🔴 Irritou</button>
+              </div></td>
+            </tr>
+            <tr>
+              <td><span class="anome">PHA</span><br><span class="atipo">Gluconolactona, Lactobiônico</span></td>
+              <td style="font-size:12px;color:#666">Renovação suave, hidratação</td>
+              <td><div class="aopt" data-an="pha">
+                <button class="abtn verde" data-av="Tolerou bem">🟢 Tolerou</button>
+                <button class="abtn amarelo" data-av="Nunca usei">🟡 Nunca usei</button>
+                <button class="abtn vermelho" data-av="Irritou">🔴 Irritou</button>
+              </div></td>
+            </tr>
+            <tr>
+              <td><span class="anome">Retinol / Retinóico</span><br><span class="atipo">Vitamina A</span></td>
+              <td style="font-size:12px;color:#666">Colágeno, rugas, manchas, acne</td>
+              <td><div class="aopt" data-an="ret">
+                <button class="abtn verde" data-av="Tolerou bem">🟢 Tolerou</button>
+                <button class="abtn amarelo" data-av="Nunca usei">🟡 Nunca usei</button>
+                <button class="abtn vermelho" data-av="Irritou / descamou">🔴 Irritou</button>
+              </div></td>
+            </tr>
+            <tr>
+              <td><span class="anome">Vitamina C</span><br><span class="atipo">Ácido Ascórbico</span></td>
+              <td style="font-size:12px;color:#666">Manchas, brilho, colágeno</td>
+              <td><div class="aopt" data-an="vitc">
+                <button class="abtn verde" data-av="Tolerou bem">🟢 Tolerou</button>
+                <button class="abtn amarelo" data-av="Nunca usei">🟡 Nunca usei</button>
+                <button class="abtn vermelho" data-av="Irritou">🔴 Irritou</button>
+              </div></td>
+            </tr>
+            <tr>
+              <td><span class="anome">Niacinamida</span><br><span class="atipo">Vitamina B3</span></td>
+              <td style="font-size:12px;color:#666">Poros, oleosidade, manchas</td>
+              <td><div class="aopt" data-an="nia">
+                <button class="abtn verde" data-av="Tolerou bem">🟢 Tolerou</button>
+                <button class="abtn amarelo" data-av="Nunca usei">🟡 Nunca usei</button>
+                <button class="abtn vermelho" data-av="Irritou / coçou">🔴 Irritou</button>
+              </div></td>
+            </tr>
+            <tr>
+              <td><span class="anome">Ác. Azelaico</span><br><span class="atipo">Anti-inflamatório suave</span></td>
+              <td style="font-size:12px;color:#666">Acne, rosácea, manchas</td>
+              <td><div class="aopt" data-an="azel">
+                <button class="abtn verde" data-av="Tolerou bem">🟢 Tolerou</button>
+                <button class="abtn amarelo" data-av="Nunca usei">🟡 Nunca usei</button>
+                <button class="abtn vermelho" data-av="Irritou">🔴 Irritou</button>
+              </div></td>
+            </tr>
+            <tr>
+              <td><span class="anome">Peeling clínico</span><br><span class="atipo">Procedimento profissional</span></td>
+              <td style="font-size:12px;color:#666">Renovação, manchas, acne</td>
+              <td><div class="aopt" data-an="peel">
+                <button class="abtn verde" data-av="Tolerou bem">🟢 Tolerou</button>
+                <button class="abtn amarelo" data-av="Nunca fiz">🟡 Nunca fiz</button>
+                <button class="abtn vermelho" data-av="Reagiu mal">🔴 Reagiu mal</button>
+              </div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="campo"><label>Após usar um produto novo no rosto, a reação mais comum é:</label>
+        <div class="pills" data-k="reac">
+          <div class="pill" data-v="Nenhuma reação">Nenhuma — aceita bem</div>
+          <div class="pill" data-v="Ardência leve inicial">Ardência leve inicial (passa rápido)</div>
+          <div class="pill" data-v="Vermelhidão e ardência persistente">Vermelhidão e ardência persistente</div>
+          <div class="pill" data-v="Descamação e irritação">Descamação e irritação</div>
+          <div class="pill" data-v="Alergia / urticária">Alergia / urticária / inchaço</div>
+        </div>
+      </div>
+      <div class="campo"><label>Pele já ficou sensibilizada após procedimento estético?</label>
+        <div class="pills" data-k="senspro">
+          <div class="pill" data-v="Nunca fiz procedimento">Nunca fiz procedimento</div>
+          <div class="pill" data-v="Fiz e não tive reação">Fiz e não tive reação</div>
+          <div class="pill" data-v="Sim, por alguns dias">Sim, por alguns dias</div>
+          <div class="pill" data-v="Sim, por semanas">Sim, por semanas</div>
+        </div>
+      </div>
+      <div class="nav"><button class="bvolt" onclick="ir(6)">← Voltar</button><div class="dots" id="d7"></div><button class="bprox" onclick="ir(8)">Próximo →</button></div>
+    </div>
+
+    <!-- S8 Hormonal -->
+    <div class="card" id="s8">
+      <span class="badge">Seção 8 de 8</span>
+      <div class="titulo">Fatores hormonais e complementares</div>
+      <div class="subtit">Hormônios, ciclo de vida, ambiente e sinais adicionais</div>
+      <div class="campo"><label>Fase da vida atual</label>
+        <div class="pills" data-k="fase">
+          <div class="pill" data-v="Adolescência">Adolescência</div>
+          <div class="pill" data-v="Adulto jovem (20 a 35 anos)">Adulto jovem</div>
+          <div class="pill" data-v="Adulto (35 a 50 anos)">Adulto 35–50</div>
+          <div class="pill" data-v="Pré-menopausa / andropausa">Pré-menopausa</div>
+          <div class="pill" data-v="Menopausa / pós-menopausa">Menopausa</div>
+        </div>
+      </div>
+      <div class="campo"><label>A pele piora em algum período do mês?</label>
+        <div class="pills" data-k="ciclo">
+          <div class="pill" data-v="Não percebo">Não percebo</div>
+          <div class="pill" data-v="Mais oleosa pré-menstrual">Mais oleosa pré-menstrual</div>
+          <div class="pill" data-v="Espinhas pré-menstruais">Espinhas pré-menstrual</div>
+          <div class="pill" data-v="Mais seca e sensível">Mais seca/sensível</div>
+          <div class="pill" data-v="Não aplicável">Não aplicável</div>
+        </div>
+      </div>
+      <div class="campo"><label>Ambiente de trabalho predominante</label>
+        <div class="pills" data-k="amb">
+          <div class="pill" data-v="Ar condicionado">Ar condicionado</div>
+          <div class="pill" data-v="Externo / ao sol">Externo / ao sol</div>
+          <div class="pill" data-v="Doméstico">Doméstico</div>
+          <div class="pill" data-v="Industrial / poluído">Industrial / poluído</div>
+          <div class="pill" data-v="Misto">Misto</div>
+        </div>
+      </div>
+      <div class="campo"><label>Sinais adicionais percebidos <span class="dica" style="display:inline;font-style:normal">(pode marcar vários)</span></label>
+        <div class="pills" data-k="sinais" data-m="1">
+          <div class="pill" data-v="Olheiras">Olheiras</div>
+          <div class="pill" data-v="Bolsas sob os olhos">Bolsas</div>
+          <div class="pill" data-v="Pele opaca / sem brilho">Pele opaca</div>
+          <div class="pill" data-v="Rugas de expressão">Rugas expressão</div>
+          <div class="pill" data-v="Pele cansada">Pele cansada</div>
+          <div class="pill" data-v="Descamação">Descamação</div>
+          <div class="pill" data-v="Vermelhidão difusa">Vermelhidão</div>
+          <div class="pill" data-v="Vasinhos">Vasinhos</div>
+          <div class="pill" data-v="Nenhum">Nenhum</div>
+        </div>
+      </div>
+      <div class="campo"><label>Observações adicionais</label>
+        <textarea id="obs" placeholder="Histórico familiar, tratamentos com dermatologista, outras informações..."></textarea>
+      </div>
+      <div class="nav"><button class="bvolt" onclick="ir(7)">← Voltar</button><div class="dots" id="d8"></div><button class="bprox bfim" onclick="gerar()">Ver resultado →</button></div>
+    </div>
+
+  </div>
+
+  <!-- RESULTADO -->
+  <div id="resultado">
+    <div class="reshd">
+      <div class="resico">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2d7dd2" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <div class="resnome" id="rnome">Anamnese concluída</div>
+      <div class="ressub" id="rsub"></div>
+    </div>
+    <div class="resgrid" id="rgrid"></div>
+    <div class="refs">
+      <p><strong>Referências clínicas:</strong><br>
+      · Fitzpatrick TB. <em>The validity and practicality of sun-reactive skin types I through VI.</em> Arch Dermatol, 1988.<br>
+      · Baumann L. <em>The Skin Type Solution.</em> Bantam Books, 2006. Sistema BSTI.<br>
+      · Kede MPV, Sabatovich O. <em>Dermatologia Estética.</em> Atheneu, 2009.<br>
+      · Glogau RG. <em>Aesthetic and anatomic analysis of the aging skin.</em> Semin Cutan Med Surg, 1996.<br>
+      · SBD. <em>Classificação dos fototipos de pele.</em> 2022.</p>
+    </div>
+    <button class="bimprime" onclick="window.print()">🖨️ Imprimir / salvar como PDF</button>
+  </div>
+
+</div>
+<script>
+var S={}, fviz=null, N=8;
+
+function mkDots(){
+  for(var i=1;i<=N;i++){
+    var el=document.getElementById('d'+i);
+    if(!el) continue;
+    el.innerHTML='';
+    for(var j=1;j<=N;j++){
+      var d=document.createElement('div');
+      d.className='dot'+(j<i?' ok':j===i?' at':'');
+      el.appendChild(d);
+    }
+  }
+}
+mkDots();
+
+document.querySelectorAll('.pills').forEach(function(g){
+  var multi=g.getAttribute('data-m')==='1';
+  g.querySelectorAll('.pill').forEach(function(p){
+    p.addEventListener('click', function(){
+      var k=g.getAttribute('data-k');
+      if(!multi){
+        g.querySelectorAll('.pill').forEach(function(x){x.classList.remove('sel');});
+        p.classList.add('sel');
+        S[k]=p.getAttribute('data-v');
+      } else {
+        p.classList.toggle('sel');
+        var arr=[];
+        g.querySelectorAll('.pill.sel').forEach(function(x){arr.push(x.getAttribute('data-v'));});
+        S[k]=arr;
+      }
+      var fks=['f1','f2','f3','f4','f5','f6','f7'];
+      if(fks.indexOf(k)>=0) calcFitz();
+    });
+  });
+});
+
+document.querySelectorAll('.hopts').forEach(function(g){
+  var hn=g.getAttribute('data-hn');
+  g.querySelectorAll('.hbtn').forEach(function(b){
+    b.addEventListener('click', function(){
+      g.querySelectorAll('.hbtn').forEach(function(x){x.classList.remove('sel');});
+      b.classList.add('sel');
+      S[hn]=b.getAttribute('data-hv');
+    });
+  });
+});
+
+document.querySelectorAll('.aopt').forEach(function(g){
+  var an=g.getAttribute('data-an');
+  g.querySelectorAll('.abtn').forEach(function(b){
+    b.addEventListener('click', function(){
+      g.querySelectorAll('.abtn').forEach(function(x){x.classList.remove('sel');});
+      b.classList.add('sel');
+      S['a_'+an]=b.getAttribute('data-av');
+    });
+  });
+});
+
+function selFitz(el, tipo){
+  document.querySelectorAll('.fcor').forEach(function(x){x.classList.remove('sel');});
+  el.classList.add('sel');
+  fviz=tipo; S['fv']=tipo;
+  calcFitz();
+}
+
+function calcFitz(){
+  var ks=['f1','f2','f3','f4','f5','f6','f7'];
+  var preenchidos=0;
+  ks.forEach(function(k){if(S[k]!==undefined) preenchidos++;});
+  if(preenchidos<3) return;
+  var sc=0;
+  ks.forEach(function(k){sc+=parseInt(S[k]||0);});
+  var t,d;
+  if(sc<=6){t='I';d='Muito clara. Queima sempre, nunca bronzeia.';}
+  else if(sc<=11){t='II';d='Clara. Queima facilmente, bronzeia minimamente.';}
+  else if(sc<=16){t='III';d='Morena clara. Queima moderadamente, bronzeia gradualmente.';}
+  else if(sc<=21){t='IV';d='Morena. Raramente queima, bronzeia com facilidade.';}
+  else if(sc<=26){t='V';d='Morena escura. Raramente queima, bronzeia muito.';}
+  else{t='VI';d='Negra. Nunca queima, altamente pigmentada.';}
+  S['fitz']=t; S['fitzSc']=sc;
+  var el=document.getElementById('fpontos');
+  el.style.display='block';
+  el.innerHTML='<strong>Pontuação: '+sc+' pts &rarr; Fototipo estimado: Tipo '+t+'</strong><br>'+d;
+}
+
+function g(k){return S[k]||'';}
+
+function ir(n){
+  document.querySelectorAll('.card').forEach(function(c){c.classList.remove('ativo');});
+  var t=document.getElementById('s'+n);
+  if(t) t.classList.add('ativo');
+  document.getElementById('pf').style.width=Math.round((n/N)*100)+'%';
+  document.getElementById('pt').textContent='Seção '+n+' de '+N;
+  window.scrollTo(0,0);
+}
+
+function gerar(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('resultado').style.display='block';
+
+  var nome=document.getElementById('nome').value||'Paciente';
+  var nasc=document.getElementById('nasc').value, idade='';
+  if(nasc){var dn=new Date(nasc),dh=new Date(); idade=(dh.getFullYear()-dn.getFullYear())+' anos';}
+  document.getElementById('rnome').textContent=nome;
+  document.getElementById('rsub').textContent=[idade,g('fase')].filter(Boolean).join(' · ');
+
+  var fitz=S['fitz']||fviz||'?';
+  var fsc=S['fitzSc']?'('+S['fitzSc']+' pts)':'';
+  var fd={
+    'I':'Muito clara. Queima sempre, nunca bronzeia. Risco altíssimo de fotodano. FPS 50+ obrigatório.',
+    'II':'Clara. Queima facilmente, bronzeia minimamente. Alto risco de fotoenvelhecimento. FPS 50+ recomendado.',
+    'III':'Morena clara. Queima moderadamente, bronzeia de forma gradual. FPS 30–50 diário.',
+    'IV':'Morena. Raramente queima, bronzeia facilmente. Atenção a melasma e manchas pós-inflamatórias.',
+    'V':'Morena escura. Raramente queima. Risco elevado de queloide e hiperpigmentação.',
+    'VI':'Negra. Nunca queima. Atenção a queloide, hiperpigmentação e diagnóstico de melanoma.'
+  };
+
+  var oleo=g('oleo'), sensib=g('sensib'), pigm=g('pigm'), env=g('env');
+  var bS=(sensib==='Resistente'||sensib==='Pouco sensível')?'R':'S';
+  var bP=(pigm==='Sem manchas')?'N':'P';
+  var bW=(env==='Sem sinais')?'T':'W';
+  var bCode=(oleo?oleo[0]:'?')+bS+bP+bW;
+
+  var gl='Sem sinais (Glogau I)';
+  if(env==='Linhas finas') gl='Envelhecimento inicial (Glogau I–II)';
+  else if(env==='Rugas moderadas') gl='Envelhecimento moderado (Glogau II–III)';
+  else if(env==='Flacidez') gl='Envelhecimento moderado-avançado (Glogau III)';
+  else if(env==='Rugas profundas e flacidez') gl='Envelhecimento avançado (Glogau IV)';
+
+  var amap={aha:'AHA',bha:'BHA (Salicílico)',pha:'PHA',ret:'Retinol',vitc:'Vitamina C',nia:'Niacinamida',azel:'Ác. Azelaico',peel:'Peeling'};
+  var irritou=[], tolerou=[], acidLinhas='';
+  Object.keys(amap).forEach(function(k){
+    var r=S['a_'+k]||'—';
+    var cor=r.indexOf('Tolerou')>=0?'#1a9e75':r.indexOf('Irritou')>=0||r.indexOf('Reagiu')>=0?'#7a0020':'#aaa';
+    acidLinhas+='<tr><td style="font-size:12px;padding:5px 8px;color:#333">'+amap[k]+'</td><td style="font-size:12px;padding:5px 8px;font-weight:600;color:'+cor+'">'+r+'</td></tr>';
+    if(r.indexOf('Tolerou')>=0) tolerou.push(amap[k]);
+    if(r.indexOf('Irritou')>=0||r.indexOf('Reagiu')>=0) irritou.push(amap[k]);
+  });
+
+  var reac=g('reac'), barreira='';
+  if(reac.indexOf('Nenhuma')>=0) barreira='Barreira cutânea íntegra — pele tolerante.';
+  else if(reac.indexOf('leve')>=0) barreira='Leve reatividade inicial — barreira em bom estado.';
+  else if(reac.indexOf('persistente')>=0) barreira='Barreira comprometida — introduzir ativos com cautela.';
+  else if(reac.indexOf('Descamação')>=0) barreira='Barreira fragilizada — priorizar reparação antes de ativos.';
+  else if(reac.indexOf('Alergia')>=0) barreira='Histórico alérgico — avaliação detalhada antes de qualquer ativo.';
+
+  var alertas=[];
+  if(g('agua')==='Menos de 1L') alertas.push({t:'Hidratação insuficiente',c:'w'});
+  if(g('stress')==='Alto'||g('stress')==='Muito alto') alertas.push({t:'Estresse elevado',c:'w'});
+  if(g('sono').indexOf('Ruim')>=0||g('sono').indexOf('Regular')>=0) alertas.push({t:'Sono prejudicado',c:'w'});
+  if(g('ativ')==='Sedentário') alertas.push({t:'Sedentarismo',c:'w'});
+  if(!g('prot')||g('prot')==='Não usa') alertas.push({t:'Sem fotoproteção',c:'w'});
+  if(g('fumo')==='Fumante atual') alertas.push({t:'Tabagismo ativo',c:'w'});
+  if(g('sol').indexOf('Intensa')>=0||g('sol').indexOf('Muito')>=0) alertas.push({t:'Exposição solar intensa',c:'w'});
+  var sd=S['saude']||[];
+  if(Array.isArray(sd)&&sd.indexOf('SOP')>=0) alertas.push({t:'SOP — atenção à acne hormonal',c:'w'});
+  if(irritou.length>0) alertas.push({t:'Ácidos que irritaram: '+irritou.join(', '),c:'w'});
+  if(g('acne')&&g('acne')!=='Não') alertas.push({t:'Tendência a acne ('+g('acne')+')',c:'i'});
+  if(pigm&&pigm!=='Sem manchas') alertas.push({t:pigm,c:'i'});
+  if(g('poros')&&g('poros')!=='Não') alertas.push({t:'Poros: '+g('poros').toLowerCase(),c:'i'});
+  if(alertas.length===0) alertas.push({t:'Sem alertas identificados',c:'k'});
+
+  document.getElementById('rgrid').innerHTML=
+    '<div class="rc azul"><div class="rclabel">Fototipo (Fitzpatrick) '+fsc+'</div><div class="rcval">Tipo '+fitz+'</div><div class="rcdesc">'+(fd[fitz]||'Não informado.')+'</div></div>'+
+    '<div class="rc verde"><div class="rclabel">Tipo de pele (Baumann BSTI)</div><div class="rcval">'+bCode+'</div><div class="rcdesc">'+[oleo,sensib,pigm!=='Sem manchas'?pigm:'Sem manchas'].filter(Boolean).join(' · ')+'</div></div>'+
+    '<div class="rc ambar"><div class="rclabel">Envelhecimento (Glogau)</div><div class="rcval">'+gl+'</div><div class="rcdesc">Baseado em rugas, flacidez e linhas de expressão relatadas.</div></div>'+
+    '<div class="rc roxo"><div class="rclabel">Tolerância a ácidos / ativos</div><div class="rcval" style="font-size:14px">'+(barreira||'—')+'</div><table style="width:100%;border-collapse:collapse;margin-top:8px">'+acidLinhas+'</table>'+(tolerou.length>0?'<div class="rcdesc" style="margin-top:6px">✅ Tolerou bem: '+tolerou.join(', ')+'</div>':'')+'</div>'+
+    '<div class="rc bordo full"><div class="rclabel">Fatores de alerta</div><div class="tags">'+alertas.map(function(a){return'<span class="tag '+a.c+'">'+a.t+'</span>';}).join('')+'</div></div>'+
+    '<div class="rc full"><div class="rclabel">Queixa principal</div><div class="rcdesc" style="font-size:14px">'+(document.getElementById('queixa').value||'Não informado')+'</div></div>';
+
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
