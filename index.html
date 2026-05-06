@@ -22,7 +22,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .campo{margin-bottom:1.2rem}
 .campo label{display:block;font-size:14px;font-weight:600;color:#222;margin-bottom:7px}
 .campo .dica{font-size:12px;color:#bbb;font-style:italic;margin-bottom:6px;display:block}
-input[type=text],input[type=date],select,textarea{width:100%;padding:10px 13px;border:1px solid #ddd;border-radius:10px;font-size:14px;font-family:inherit;background:#fafafa;color:#1a1a1a;transition:border .2s}
+input[type=text],input[type=date],select,textarea{width:100%;padding:10px 13px;border:1px solid #ddd;border-radius:10px;font-size:14px;font-family:inherit;background:#fafafa;color:#1a1a1a;transition:all .2s}
 input:focus,select:focus,textarea:focus{outline:none;border-color:#2d7dd2;background:#fff}
 textarea{resize:vertical;min-height:70px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -102,12 +102,33 @@ textarea{resize:vertical;min-height:70px}
 .refs strong{color:#888}
 .bimprime{width:100%;margin-top:12px;padding:12px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;cursor:pointer;background:#fff;color:#666;font-family:inherit}
 .bimprime:hover{background:#f5f5f5}
+@keyframes slideIn {
+  from { transform: translateX(400px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(400px); opacity: 0; }
+}
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 16px 24px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  z-index: 9999;
+  animation: slideIn 0.3s ease;
+}
+.toast.success { background: #1a9e75; }
+.toast.error { background: #7a0020; }
 @media print{.nav,.bimprime,.progbar,.progtxt,#quiz{display:none!important}#resultado{display:block!important}body{background:#fff}}
 </style>
 </head>
 <body>
 <div class="wrap">
-
+  
   <div class="logo">
     <h1>Clínica Khepri</h1>
     <p>Anamnese Dermatológica</p>
@@ -635,6 +656,7 @@ textarea{resize:vertical;min-height:70px}
       · SBD. <em>Classificação dos fototipos de pele.</em> 2022.</p>
     </div>
     <button class="bimprime" onclick="window.print()">🖨️ Imprimir / salvar como PDF</button>
+    <button class="bprox" style="width:100%;margin-top:12px" onclick="salvarResposta()">💾 Salvar resposta e enviar email</button>
   </div>
 
 </div>
@@ -736,6 +758,53 @@ function ir(n){
   window.scrollTo(0,0);
 }
 
+function mostrarToast(msg, tipo) {
+  var el = document.createElement('div');
+  el.className = 'toast ' + tipo;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(function(){
+    el.style.animation = 'slideOut 0.3s ease';
+    setTimeout(function(){el.remove();}, 300);
+  }, 3000);
+}
+
+async function salvarResposta() {
+  var nome = document.getElementById('nome').value || 'Sem nome';
+  var dados = {
+    timestamp: new Date().toISOString(),
+    nome: nome,
+    telefone: document.getElementById('tel').value || '',
+    queixa: document.getElementById('queixa').value || '',
+    todas_as_respostas: S
+  };
+  
+  try {
+    var response = await fetch('https://formspree.io/f/xyzqazop', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        _subject: 'Nova Anamnese: ' + nome,
+        nome: nome,
+        timestamp: dados.timestamp,
+        telefone: dados.telefone,
+        queixa: dados.queixa,
+        dados_completos: JSON.stringify(S, null, 2)
+      })
+    });
+    
+    if(response.ok) {
+      mostrarToast('✅ Resposta salva e email enviado!', 'success');
+      setTimeout(function(){window.location.reload();}, 1500);
+    } else {
+      mostrarToast('❌ Erro ao salvar', 'error');
+    }
+  } catch(err) {
+    console.error(err);
+    mostrarToast('❌ Erro na requisição', 'error');
+  }
+}
+
 function gerar(){
   document.getElementById('quiz').style.display='none';
   document.getElementById('resultado').style.display='block';
@@ -806,7 +875,7 @@ function gerar(){
     '<div class="rc azul"><div class="rclabel">Fototipo (Fitzpatrick) '+fsc+'</div><div class="rcval">Tipo '+fitz+'</div><div class="rcdesc">'+(fd[fitz]||'Não informado.')+'</div></div>'+
     '<div class="rc verde"><div class="rclabel">Tipo de pele (Baumann BSTI)</div><div class="rcval">'+bCode+'</div><div class="rcdesc">'+[oleo,sensib,pigm!=='Sem manchas'?pigm:'Sem manchas'].filter(Boolean).join(' · ')+'</div></div>'+
     '<div class="rc ambar"><div class="rclabel">Envelhecimento (Glogau)</div><div class="rcval">'+gl+'</div><div class="rcdesc">Baseado em rugas, flacidez e linhas de expressão relatadas.</div></div>'+
-    '<div class="rc roxo"><div class="rclabel">Tolerância a ácidos / ativos</div><div class="rcval" style="font-size:14px">'+(barreira||'—')+'</div><table style="width:100%;border-collapse:collapse;margin-top:8px">'+acidLinhas+'</table>'+(tolerou.length>0?'<div class="rcdesc" style="margin-top:6px">✅ Tolerou bem: '+tolerou.join(', ')+'</div>':'')+'</div>'+
+    '<div class="rc roxo"><div class="rclabel">Tolerância a ácidos / ativos</div><div class="rcval" style="font-size:14px">'+(barreira||'—')+'</div><table style="width:100%;border-collapse:collapse;margin-top:10px;font-size:11px">'+acidLinhas+'</table></div>'+
     '<div class="rc bordo full"><div class="rclabel">Fatores de alerta</div><div class="tags">'+alertas.map(function(a){return'<span class="tag '+a.c+'">'+a.t+'</span>';}).join('')+'</div></div>'+
     '<div class="rc full"><div class="rclabel">Queixa principal</div><div class="rcdesc" style="font-size:14px">'+(document.getElementById('queixa').value||'Não informado')+'</div></div>';
 
